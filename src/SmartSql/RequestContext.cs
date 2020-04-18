@@ -27,9 +27,9 @@ namespace SmartSql
         public String RealSql { get; set; }
 
         public String AutoConverterName { get; set; }
-        
+
         internal IAutoConverter AutoConverter { get; set; }
-        
+
         /// <summary>
         /// SmartSqlMap.Scope
         /// </summary>
@@ -58,12 +58,12 @@ namespace SmartSql
 
         #endregion
 
-        public SqlParameterCollection Parameters { get; set; }
+        public ISqlParameterCollection Parameters { get; protected set; }
 
         public ResultMap GetCurrentResultMap()
         {
             return MultipleResultMap != null
-                ? MultipleResultMap.Results[ExecutionContext.DataReaderWrapper.ResultIndex]?.Map
+                ? MultipleResultMap.GetResultMap(ExecutionContext.DataReaderWrapper.ResultIndex)
                 : ResultMap;
         }
 
@@ -102,6 +102,7 @@ namespace SmartSql
 
         public abstract void SetupParameters();
         public abstract void SetRequest(object requestObj);
+        public abstract Object GetRequest();
 
         /// <summary>
         /// 获取请求实体变更的版本号
@@ -117,14 +118,24 @@ namespace SmartSql
 
         public override void SetupParameters()
         {
+            bool ignoreParameterCase = false;
+            if (ExecutionContext != null)
+            {
+                ignoreParameterCase = ExecutionContext.SmartSqlConfig.Settings.IgnoreParameterCase;
+            }
+
             Parameters =
-                SqlParameterCollection.Create<TRequest>(Request,
-                    ExecutionContext.SmartSqlConfig.Settings.IgnoreParameterCase);
+                SqlParameterCollection.Create<TRequest>(Request, ignoreParameterCase);
         }
 
         public override void SetRequest(object requestObj)
         {
             Request = (TRequest) requestObj;
+        }
+
+        public override object GetRequest()
+        {
+            return Request;
         }
 
         public override int GetPropertyVersion(string propName)

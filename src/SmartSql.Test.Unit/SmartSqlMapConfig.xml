@@ -3,7 +3,7 @@
   <Settings IgnoreParameterCase="false" ParameterPrefix="$"  IsCacheEnabled="true" EnablePropertyChangedTrack="true" IgnoreDbNull="true"/>
   <Properties>
 <!--    <Property Name="Redis" Value="localhost"/>-->
-    <Property Name="DbProvider" Value="SqlServer"/>
+    <Property Name="DbProvider" Value="MsSqlServer"/>
     <Property Name="ConnectionString" Value="Data Source=.;Initial Catalog=SmartSqlTestDB;Integrated Security=True"/>
     <Property Name="JsonTypeHandler`" Value="SmartSql.TypeHandler.JsonTypeHandler`1,SmartSql.TypeHandler"/>
     <Property Name="JsonTypeHandler" Value="SmartSql.TypeHandler.JsonTypeHandler,SmartSql.TypeHandler"/>
@@ -47,6 +47,7 @@
     </AutoConverter>
   </AutoConverters>
   <Database>
+    <!-- MsSqlServer: Microsoft.Data.SqlClient , SqlServer: System.Data.SqlClinet -->
     <DbProvider Name="${DbProvider}"/>
     <Write Name="WriteDB" ConnectionString="${ConnectionString}"/>
     <Read Name="ReadDb-1" ConnectionString="${ConnectionString}" Weight="100"/>
@@ -57,6 +58,16 @@
       <Properties>
         <Property Name="DateFormat" Value="yyyy-MM-dd mm:ss"/>
         <Property Name="NamingStrategy" Value="Camel"/>
+      </Properties>
+    </TypeHandler>
+    <TypeHandler Name="AnsiStringTypeHandler" Type="SmartSql.TypeHandlers.StringTypeHandler,SmartSql">
+      <Properties>
+        <Property Name="DbType" Value="AnsiString"/>
+      </Properties>
+    </TypeHandler>
+    <TypeHandler Name="AnsiStringFixedLengthTypeHandler" Type="SmartSql.TypeHandlers.StringTypeHandler,SmartSql">
+      <Properties>
+        <Property Name="DbType" Value="AnsiStringFixedLength"/>
       </Properties>
     </TypeHandler>
     <TypeHandler Name="Json" Type="${JsonTypeHandler}"></TypeHandler>
